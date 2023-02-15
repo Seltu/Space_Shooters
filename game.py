@@ -108,9 +108,9 @@ class Game:
         if len(ship_one.shot_list) <= 0:
             return
         close = ship_one.shot_list[0]
-        closest = close.pos.distance_to(pygame.math.Vector2(ship_two.rect.x, ship_two.rect.y))
+        closest = close.pos.distance_to(pygame.math.Vector2(ship_two.rect.centerx, ship_two.rect.centery))
         for shot in ship_one.shot_list:
-            distance = shot.pos.distance_to(pygame.math.Vector2(ship_two.rect.x, ship_two.rect.y))
+            distance = shot.pos.distance_to(pygame.math.Vector2(ship_two.rect.centerx, ship_two.rect.centery))
             if distance < closest:
                 closest = distance
                 close = shot

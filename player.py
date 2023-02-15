@@ -9,11 +9,11 @@ class PlayerShip(Ship):
     def __init__(self, sheet, pos):
         super().__init__()
         self.score = 0
-        self.shot_time = 15
-        self.number_of_shots = 6
+        self.shot_time = 25
+        self.number_of_shots = 2
         self.move_speed = 4
         self.damage = 10
-        self.hp = 5
+        self.hp = 55
         self.make_ship(sheet, 'Sprites/fire.png', pos)
         self.invincibility_time = 100
         self.invincible_timer = 0
@@ -35,15 +35,18 @@ class PlayerShip(Ship):
             super().lose_hp(damage)
             self.invincible_timer = self.invincibility_time
 
+    def shot_angle(self, i):
+        spread_angle = math.pi / 18 * self.number_of_shots
+        return i * spread_angle / (self.number_of_shots-1) - math.pi/2 - spread_angle/2
+
     def create_shots(self):
-        angle = math.pi + math.pi/self.number_of_shots/2
-        shots = [Shot(self, 10 * math.cos(i * math.pi / self.number_of_shots + angle) + self.rect.width / 2,
-                      10 * math.sin(i * math.pi / self.number_of_shots + angle) + self.rect.height / 2,
-                      self.shot_speed * math.cos(i * math.pi / self.number_of_shots + angle),
-                      self.shot_speed * math.sin(i * math.pi / self.number_of_shots + angle))
+        shots = [Shot(self, 10 * math.cos(self.shot_angle(i)) + self.rect.width / 2,
+                      10 * math.sin(self.shot_angle(i)) + self.rect.height / 2,
+                      self.shot_speed * math.cos(self.shot_angle(i)),
+                      self.shot_speed * math.sin(self.shot_angle(i)))
                  for i in range(self.number_of_shots)]
         return shots
-    
+
     def move(self):
         speed = self.vel.copy()
         if speed.length() > 0:

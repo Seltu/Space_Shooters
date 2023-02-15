@@ -10,7 +10,7 @@ class Ship(AnimatedSprite):
         self.damage = 0
         self.hp = 1
         self.img_ship = []
-        self.shot_speed = 5
+        self.shot_speed = 4
         self.shot_list = []
         self.shot_time = 0
         self.shot_sprites = pygame.sprite.Group()

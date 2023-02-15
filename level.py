@@ -1,5 +1,4 @@
 from config import *
-from enemy import EnemyShip
 
 
 class Wave:
