@@ -10,7 +10,7 @@ class PlayerShip(Ship):
         super().__init__()
         self.score = 0
         self.shot_time = 25
-        self.number_of_shots = 2
+        self.number_of_shots = 1
         self.move_speed = 4
         self.damage = 10
         self.hp = 55
