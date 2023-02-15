@@ -37,7 +37,10 @@ class PlayerShip(Ship):
 
     def shot_angle(self, i):
         spread_angle = math.pi / 18 * self.number_of_shots
-        return i * spread_angle / (self.number_of_shots-1) - math.pi/2 - spread_angle/2
+        if self.number_of_shots > 1:
+            return i * spread_angle / (self.number_of_shots-1) - math.pi/2 - spread_angle/2
+        else:
+            return -math.pi/2
 
     def create_shots(self):
         shots = [Shot(self, 10 * math.cos(self.shot_angle(i)) + self.rect.width / 2,
