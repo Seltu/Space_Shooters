@@ -1,13 +1,21 @@
+import sys
 import pygame
+import config
 
 from game import Game
-from level import Levels
-from config import *
+from GameStates.gameplay import Gameplay
 
+# setup mixer to avoid sound lag
+pygame.mixer.pre_init(44100, -16, 2, 2048)
 pygame.init()
-screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
-screen_height = screen.get_height()
-screen_width = screen.get_width()
-pygame.display.set_caption("Space Shooters")
-play = Game(screen, Levels(1))
-play.game_loop()
+pygame.mixer.init()
+screen = pygame.display.set_mode((config.screen_width,
+                                  config.screen_height))
+states = {
+    "GAMEPLAY": Gameplay(),
+}
+
+game = Game(screen, states, "GAMEPLAY")
+game.run()
+pygame.quit()
+sys.exit()
