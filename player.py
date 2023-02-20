@@ -9,14 +9,16 @@ class PlayerShip(Ship):
     def __init__(self, sheet, pos):
         super().__init__()
         self.score = 0
-        self.shot_time = 25
+        self.shot_time = 10
         self.number_of_shots = 1
-        self.move_speed = 4
+        self.shot_speed = 10
+        self.move_speed = 6
         self.damage = 10
-        self.hp = 55
+        self.hp = 5
         self.make_ship(sheet, 'Sprites/fire.png', pos)
         self.invincibility_time = 100
         self.invincible_timer = 0
+        self.shooting = False
 
     def go(self, axis, speed):
         if self.vel[axis] == speed*-1:
@@ -42,11 +44,14 @@ class PlayerShip(Ship):
         else:
             return -math.pi/2
 
+    def shoot_(self):
+        self.shooting = not self.shooting
+
     def create_shots(self):
-        shots = [Shot(self, 10 * math.cos(self.shot_angle(i)) + self.rect.width / 2,
-                      10 * math.sin(self.shot_angle(i)) + self.rect.height / 2,
-                      self.shot_speed * math.cos(self.shot_angle(i)),
-                      self.shot_speed * math.sin(self.shot_angle(i)))
+        shots = [Shot(self, 40 * math.cos(self.shot_angle(i)),
+                      40 * math.sin(self.shot_angle(i)),
+                      math.cos(self.shot_angle(i)),
+                      math.sin(self.shot_angle(i)))
                  for i in range(self.number_of_shots)]
         return shots
 
@@ -60,6 +65,8 @@ class PlayerShip(Ship):
             self.rect.y += speed[1] * self.move_speed
 
     def update(self):
+        if self.shooting:
+            self.shoot = True
         if self.invincible_timer > 0:
             self.invincible_timer -= 1
         self.alpha = 255-255*self.invincible_timer/100

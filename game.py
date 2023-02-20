@@ -8,6 +8,7 @@ from animation import AnimatedSprite
 
 class Game:
     def __init__(self, screen, level):
+        self.aim_enemies = []
         self.screen = screen
         self.background = level.get_bg_color()
         self.level = level
@@ -34,6 +35,8 @@ class Game:
                     self.ship.stop(0, -1)
                 if event.key == pygame.K_RIGHT:
                     self.ship.stop(0, 1)
+                if event.key == pygame.K_z:
+                    self.ship.shoot_()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_z:
                     self.ship.shoot_()
@@ -63,6 +66,8 @@ class Game:
                 enemy.shot_sprites.update()
                 self.shoot_collision(self.ship, enemy)
                 self.shoot_collision(enemy, self.ship)
+            for enemy in self.aim_enemies:
+                enemy.set_target(pygame.math.Vector2(self.ship.rect.centerx, self.ship.rect.centery))
             self.progress_level()
             self.draw_sprites()
             pygame.display.update()
@@ -85,12 +90,16 @@ class Game:
                     elif wave.enemy == 1:
                         enemy = Enemy2('Sprites/enemy_2', 'Sprites/enemy_fire2.png',
                                        wave.curve, self.wave_progress * 3)
+                    elif wave.enemy == 2:
+                        enemy = Enemy3('Sprites/enemy_3', 'Sprites/enemy_fire3.png',
+                                       wave.curve, self.wave_progress * 3)
+                        self.aim_enemies.append(enemy)
                     self.enemies.append(enemy)
                     self.sprites.add(enemy)
                     self.level_timer = 60 / wave.number
             self.wave_progress += 1
         else:
-            self.level_timer = 400
+            self.level_timer = 470
             self.level_progress += 1
             self.wave_progress = 0
 

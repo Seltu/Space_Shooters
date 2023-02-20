@@ -21,7 +21,7 @@ class EnemyShip(Ship):
         self.previous_point = path_point
         self.rect.centerx = path_point.x
         self.rect.centery = path_point.y
-        self.bezier_timer += 0.0012 * self.curve.number_of_quartets()
+        self.bezier_timer += 0.0008 * self.curve.number_of_quartets()
         if int(self.bezier_timer) > self.curve.number_of_quartets() - 1:
             self.bezier_timer = 0
             # enter space invaders mode

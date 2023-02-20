@@ -23,13 +23,3 @@ class BezierCollection:
 
         return -1, -1, False
 
-    def save_control_points(self):
-        with open('control_points.txt', 'w') as file:
-            for quartet in self.bezier_curves:
-                file.write('\n    control_point_quartet_collection.add(ControlPointQuartet(')
-                for index, point in enumerate(quartet.points):
-                    if index == 3:
-                        file.write(f'\n        {point.x}, {point.y}')
-                    else:
-                        file.write(f'\n        {point.x}, {point.y},')
-                file.write('))')

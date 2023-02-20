@@ -17,8 +17,8 @@ class Shot(pygame.sprite.Sprite):
     def __init__(self, ship, offset_x, offset_y, vel_x, vel_y):
         pygame.sprite.Sprite.__init__(self)
         self.ship = ship
-        self.pos = pygame.math.Vector2(ship.rect.x + offset_x, ship.rect.y + offset_y)
-        self.vel = pygame.math.Vector2(vel_x, vel_y)
+        self.pos = pygame.math.Vector2(ship.rect.centerx + offset_x, ship.rect.centery + offset_y)
+        self.vel = pygame.math.Vector2(vel_x*self.ship.shot_speed, vel_y*self.ship.shot_speed)
         self.cont = 0
         self.image = ship.shot_sprite
         self.image = pygame.transform.scale(self.image, (30, 30))

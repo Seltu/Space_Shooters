@@ -58,8 +58,9 @@ class Ship(AnimatedSprite):
         if self.shoot and self.shoot_time <= 0:
             self.shoot_time = self.shot_time
             shots = self.create_shots()
-            for shot in shots:
-                self.shot_sprites.add(shot)
-                self.shot_list.append(shot)
+            if shots is not None:
+                for shot in shots:
+                    self.shot_sprites.add(shot)
+                    self.shot_list.append(shot)
             self.shoot = False
             # shot_sound_effect.play()

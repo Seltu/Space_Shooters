@@ -27,15 +27,48 @@ waveline2.add(BezierCurve(
 waveline3 = BezierCollection()
 waveline3.add(BezierCurve(
     500, -50,
-    500, -50,
-    500, 1100,
-    500, 1100))
+    500, 50,
+    500, 100,
+    500, 200))
+waveline3.add(BezierCurve(
+    500, 200,
+    500, 300,
+    500, 400,
+    500, 500))
+waveline3.add(BezierCurve(
+    500, 500,
+    500, 500,
+    200, 600,
+    0, 600))
 
 waveline4 = BezierCollection()
 waveline4.add(BezierCurve(
     1100, -50,
-    1100, -50,
-    1100, 1100,
-    1100, 1100))
+    1100, 50,
+    1100, 100,
+    1100, 200))
+waveline4.add(BezierCurve(
+    1100, 200,
+    1100, 300,
+    1100, 400,
+    1100, 500))
+waveline4.add(BezierCurve(
+    1100, 500,
+    1100, 500,
+    1400, 600,
+    1600, 600))
+
+waveline5 = BezierCollection()
+waveline5.add(BezierCurve(
+    0, -50,
+    0, 800,
+    1600, 800,
+    1600, -50))
+waveline5.add(BezierCurve(
+    1600, -50,
+    1600, 800,
+    0, 800,
+    0, -50
+))
 
 
