@@ -19,6 +19,8 @@ class PlayerShip(Ship):
         self.invincibility_time = 100
         self.invincible_timer = 0
         self.shooting = False
+        self.vel = pygame.math.Vector2(0, 0)
+        self.store = pygame.math.Vector2(0, 0)
 
     def go(self, axis, speed):
         if self.vel[axis] == speed*-1:

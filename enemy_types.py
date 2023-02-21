@@ -1,6 +1,7 @@
 import pygame
+import math
 
-from enemy import *
+from enemy import EnemyShip
 from shot import Shot
 
 
@@ -56,3 +57,23 @@ class Enemy3(EnemyShip):
 
     def set_target(self, target):
         self.target = target
+
+
+class Enemy4(EnemyShip):
+    def __init__(self, sheet, shot, curve, shoot_delay):
+        super().__init__(sheet, shot, curve, shoot_delay)
+        self.hp = 10
+        self.shot_speed = 10
+        self.shot_time = 8
+        self.damage = 1
+        self.shot_tilt = math.pi/2
+        self.shot_h = 50
+        self.shot_w = 50
+
+    def create_shots(self):
+        shots = [Shot(self, 10 * math.cos(2 * math.pi / + self.shot_tilt),
+                      10 * math.sin(2 * math.pi + self.shot_tilt),
+                      math.cos(2 * math.pi + self.shot_tilt),
+                      math.sin(2 * math.pi + self.shot_tilt))]
+        self.shot_tilt += math.pi / 2.5
+        return shots

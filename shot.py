@@ -21,7 +21,7 @@ class Shot(pygame.sprite.Sprite):
         self.vel = pygame.math.Vector2(vel_x*self.ship.shot_speed, vel_y*self.ship.shot_speed)
         self.cont = 0
         self.image = ship.shot_sprite
-        self.image = pygame.transform.scale(self.image, (30, 30))
+        self.image = pygame.transform.scale(self.image, (ship.shot_h, ship.shot_w))
         self.group = pygame.sprite.Group()
         self.rect = self.image.get_rect()
         self.rect.center = [int(self.pos.x), int(self.pos.y)]

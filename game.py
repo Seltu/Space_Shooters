@@ -14,6 +14,8 @@ class Game:
 
     def event_loop(self):
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.done = True
             self.state.check_event(event)
 
     def change_state(self):

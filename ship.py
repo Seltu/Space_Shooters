@@ -15,8 +15,8 @@ class Ship(AnimatedSprite):
         self.shot_time = 0
         self.shot_sprites = pygame.sprite.Group()
         self.shot_sprite = pygame.image.load("Sprites/testeball.png")
-        self.vel = pygame.math.Vector2(0, 0)
-        self.store = pygame.math.Vector2(0, 0)
+        self.shot_h = 30
+        self.shot_w = 30
         self.shoot = False
         self.shoot_time = 0
         self.dead = False
@@ -44,6 +44,8 @@ class Ship(AnimatedSprite):
         if self.hp <= 0:
             self.kill()
             self.dead = True
+            return True
+        return False
 
     def move(self):
         pass
