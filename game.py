@@ -31,9 +31,8 @@ class Game:
         self.state.update(dt)
 
     def draw(self):
-        if not self.state_name == "MENU":
-            self.screen.fill((0, 0, 0))
-            self.state.draw(self.screen)
+        self.screen.fill((0, 0, 0))
+        self.state.draw(self.screen)
 
     def run(self):
         while not self.done:

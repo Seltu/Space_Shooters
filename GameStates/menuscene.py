@@ -28,12 +28,7 @@ class MenuState(GameState):
                self.can_draw_menu = False
                self.done = True
 
-    def update(self, dt):
-        if self.can_draw_menu:
-            from main import screen
-            self.draw_menu(screen)
-
-    def draw_menu(self, screen):
+    def draw(self, screen):
         screen.blit(self.background, self.background_rect)
         screen.blit(self.press, self.press_rect)
         screen.blit(self.logo, self.logo_rect)
