@@ -32,13 +32,7 @@ class Shot(AnimatedSprite):
 
 
 class TimedShot(Shot):
-    def __init__(self, ship, offset_x, offset_y, vel_x, vel_y, time):
+    def __init__(self, ship, offset_x, offset_y, vel_x, vel_y, speed):
         super().__init__(ship, offset_x, offset_y, vel_x, vel_y)
-        self.time = time
-
-    def update(self):
-        super().update()
-        self.time -= 1
-        if self.time < 0:
-            self.kill()
-            self.ship.shot_list.remove(self)
+        self.speed = speed
+        self.play_once = True

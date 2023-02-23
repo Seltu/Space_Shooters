@@ -3,6 +3,7 @@ import pygame.math
 from level import Levels
 from player import PlayerShip
 from enemy_types import *
+from boss_enemies import *
 from config import *
 from animation import AnimatedSprite
 from GameStates.game_state import GameState
@@ -20,8 +21,9 @@ class Gameplay(GameState):
         self.enemies = []
         self.sprites.add(self.ship)
         self.level_progress = 0
-        self.wave_progress = 1
+        self.wave_progress = 0
         self.level_timer = 0
+        self.boss_fight = False
 
     # Check if an event happens
     def check_event(self, event):
@@ -48,7 +50,7 @@ class Gameplay(GameState):
             if event.key == pygame.K_RIGHT:
                 self.ship.go(0, 1)
             if event.key == pygame.K_0:
-                enemy = Enemy2('Sprites/enemy_2', 'Sprites/enemy_fire2.png', waveline3, 0)
+                enemy = Enemy2('Sprites/enemy_2', 'Sprites/enemy_fire2', waveline3, 0)
                 self.enemies.append(enemy)
                 self.sprites.add(enemy)
             if event.key == pygame.K_r:
@@ -70,7 +72,13 @@ class Gameplay(GameState):
         if self.level_timer > 0:
             self.level_timer -= 1
             return
+        if self.boss_fight:
+            return
         if self.level_progress >= len(self.level.rounds):
+            boss = BossBaron((screen_width/2, 0))
+            self.enemies.append(boss)
+            self.sprites.add(boss)
+            self.boss_fight = True
             return
         current_round = self.level.rounds[self.level_progress]
         if self.wave_progress < 60:
@@ -78,15 +86,18 @@ class Gameplay(GameState):
                 if self.wave_progress % (60 / wave.number) == 0:
                     enemy = None
                     if wave.enemy == 0:
-                        enemy = Enemy1('Sprites/enemy_1', 'Sprites/enemy_fire.png',
+                        enemy = Enemy1('Sprites/enemy_1', 'Sprites/enemy_fire',
                                        wave.curve, self.wave_progress * 3)
                     elif wave.enemy == 1:
-                        enemy = Enemy2('Sprites/enemy_2', 'Sprites/enemy_fire2.png',
+                        enemy = Enemy2('Sprites/enemy_2', 'Sprites/enemy_fire2',
                                        wave.curve, self.wave_progress * 3)
                     elif wave.enemy == 2:
-                        enemy = Enemy3('Sprites/enemy_3', 'Sprites/enemy_fire3.png',
+                        enemy = Enemy3('Sprites/enemy_3', 'Sprites/enemy_fire3',
                                        wave.curve, self.wave_progress * 3)
                         self.aim_enemies.append(enemy)
+                    elif wave.enemy == 3:
+                        enemy = Enemy4('Sprites/enemy_4', 'Sprites/enemy_fire4',
+                                       wave.curve, self.wave_progress * 3)
                     self.enemies.append(enemy)
                     self.sprites.add(enemy)
                     self.level_timer = 60 / wave.number
@@ -117,7 +128,9 @@ class Gameplay(GameState):
                 closest = distance
                 close = shot
         if pygame.sprite.collide_mask(close, ship_two):
-            ship_two.lose_hp(ship_one.damage)
+            if ship_two.lose_hp(ship_one.damage):
+                if ship_two is BossEnemy:
+                    self.boss_fight = False
             explosion = AnimatedSprite(1, True, 'Sprites/Boom')
             self.sprites.add(explosion)
             explosion.rect.center = ship_two.rect.center
