@@ -1,6 +1,6 @@
 import pygame
 import config
-
+from GameStates.menuscene import MenuState
 
 class Game:
     def __init__(self, screen, states, start_state):
