@@ -1,6 +1,6 @@
 import pygame
 import config
-
+from GameStates.menuscene import MenuState
 
 class Game:
     def __init__(self, screen, states, start_state):
@@ -31,8 +31,9 @@ class Game:
         self.state.update(dt)
 
     def draw(self):
-        self.screen.fill((0, 0, 0))
-        self.state.draw(self.screen)
+        if not self.state_name == "MENU":
+            self.screen.fill((0, 0, 0))
+            self.state.draw(self.screen)
 
     def run(self):
         while not self.done:

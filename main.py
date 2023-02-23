@@ -3,6 +3,7 @@ import pygame
 import config
 
 from game import Game
+from GameStates.menuscene import MenuState
 from GameStates.gameplay import Gameplay
 
 # setup mixer to avoid sound lag
@@ -12,10 +13,11 @@ pygame.mixer.init()
 screen = pygame.display.set_mode((config.screen_width,
                                   config.screen_height))
 states = {
-    "GAMEPLAY": Gameplay(),
+    "MENU": MenuState(),
+    "GAMEPLAY": Gameplay()
 }
 
-game = Game(screen, states, "GAMEPLAY")
+game = Game(screen, states, "MENU")
 game.run()
 pygame.quit()
 sys.exit()
