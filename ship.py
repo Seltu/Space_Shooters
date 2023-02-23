@@ -30,7 +30,7 @@ class Ship(AnimatedSprite):
         for i in range(0, len(os.listdir(self.path))):
             image = pygame.image.load(f"{self.path}/tile{i:03d}.png")
             self.sprites.append(image)
-        self.shot_sprite = pygame.image.load(shot)
+        self.shot_sprite = shot
         self.rect.center = (pos[0], pos[1])
 
     def shoot_(self):

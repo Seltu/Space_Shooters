@@ -15,7 +15,7 @@ class PlayerShip(Ship):
         self.move_speed = 6
         self.damage = 10
         self.hp = 5
-        self.make_ship(sheet, 'Sprites/fire.png', pos)
+        self.make_ship(sheet, 'Sprites/fire', pos)
         self.invincibility_time = 100
         self.invincible_timer = 0
         self.shooting = False
