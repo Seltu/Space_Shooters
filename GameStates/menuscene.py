@@ -1,11 +1,7 @@
 import pygame.math
 
-from level import Levels
-from player import PlayerShip
-from enemy_types import *
-from config import *
-from animation import AnimatedSprite
 from GameStates.game_state import GameState
+from config import *
 
 
 class MenuState(GameState):
@@ -19,14 +15,12 @@ class MenuState(GameState):
         self.press_rect = self.press.get_rect(topleft=(160, 700))
         self.logo = pygame.image.load("Sprites/MenuSprites/SPACE SHOOTERS.png")
         self.logo_rect = self.logo.get_rect(topleft=(125, 150))
-        self.can_draw_menu = True
 
     # Check if an event happens
     def check_event(self, event):
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_KP_ENTER:
-               self.can_draw_menu = False
-               self.done = True
+            if event.key == pygame.K_RETURN:
+                self.done = True
 
     def draw(self, screen):
         screen.blit(self.background, self.background_rect)
