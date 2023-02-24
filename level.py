@@ -10,7 +10,7 @@ class Levels:
     def __init__(self, layout_type: int):
         self.group = pygame.sprite.Group()
         self.rounds = []
-        self.boss = BossBaron((screen_width/2, 0))
+        self.boss = BossBaron((screen_width / 2, 0))
         self.get_waves()
         self.wall_color = "#d4a941"
         self.bg_color = "#1C0026"
@@ -38,18 +38,22 @@ class Levels:
 
         # self.levels.append(layout_temp)
 
-    def make_enemy(self, id, curve, progress):
+    @staticmethod
+    def make_enemy(number, curve, progress):
         enemy = None
-        if id == 0:
+        if number == 0:
             enemy = Enemy1('Sprites/enemy_1', 'Sprites/enemy_fire',
                            curve, progress * 3)
-        elif id == 1:
+        elif number == 1:
             enemy = Enemy2('Sprites/enemy_2', 'Sprites/enemy_fire2',
                            curve, progress * 3)
-        elif id == 2:
+        elif number == 2:
             enemy = Enemy3('Sprites/enemy_3', 'Sprites/enemy_fire3',
                            curve, progress * 3)
-        elif id == 3:
+        elif number == 3:
             enemy = Enemy4('Sprites/enemy_4', 'Sprites/enemy_fire4',
                            curve, progress * 3)
+        elif number == 4:
+            enemy = BaronMinion('Sprites/minion_baron', 'Sprites/minion_baron_fire',
+                                curve, progress * 3)
         return enemy

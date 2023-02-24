@@ -73,13 +73,13 @@ class Gameplay(GameState):
             self.level_timer -= 1
             return
         if self.boss_fight:
-            self.add_waves(self.level.boss.create_waves())
+            if self.level.boss.summon:
+                self.add_waves(self.level.boss.create_waves())
             return
         if self.level_progress >= len(self.level.rounds):
             self.enemies.append(self.level.boss)
             self.sprites.add(self.level.boss)
             self.boss_fight = True
-            self.level_timer = 400
             return
         current_round = self.level.rounds[self.level_progress]
         self.add_waves(current_round)
@@ -96,9 +96,12 @@ class Gameplay(GameState):
                     self.level_timer = 60 / wave.number
             self.wave_progress += 1
         else:
-            self.level_timer = 470
             self.level_progress += 1
             self.wave_progress = 0
+            if self.boss_fight:
+                self.level.boss.summon = False
+            else:
+                self.level_timer = 470
 
     # Draws Elements
     def draw(self, screen):
@@ -126,7 +129,7 @@ class Gameplay(GameState):
                     self.boss_fight = False
             explosion = AnimatedSprite(1, True, 'Sprites/Boom')
             self.sprites.add(explosion)
-            explosion.rect.center = ship_two.rect.center
-            ship_one.shot_sprites.remove(close)
+            explosion.rect.center = close.rect.center
             close.kill()
             del close
+

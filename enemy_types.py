@@ -78,3 +78,16 @@ class Enemy4(EnemyShip):
                       math.sin(2 * math.pi + self.shot_tilt))]
         self.shot_tilt += math.pi / 2.5
         return shots
+
+
+class BaronMinion(EnemyShip):
+    def __init__(self, sheet, shot, curve, shoot_delay):
+        super().__init__(sheet, shot, curve, shoot_delay)
+        self.hp = 10
+        self.shot_speed = 4
+        self.shot_time = 130
+        self.damage = 1
+
+    def create_shots(self):
+        shots = [Shot(self, 0, 0, -1, 1), Shot(self, 0, 0, 1, 1)]
+        return shots
