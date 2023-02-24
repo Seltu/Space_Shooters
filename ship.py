@@ -11,7 +11,6 @@ class Ship(AnimatedSprite):
         self.hp = 1
         self.img_ship = []
         self.shot_speed = 4
-        self.shot_list = []
         self.shot_time = 0
         self.shot_sprites = pygame.sprite.Group()
         self.shot_sprite = pygame.image.load("Sprites/testeball.png")
@@ -63,6 +62,5 @@ class Ship(AnimatedSprite):
             if shots is not None:
                 for shot in shots:
                     self.shot_sprites.add(shot)
-                    self.shot_list.append(shot)
             self.shoot = False
             # shot_sound_effect.play()

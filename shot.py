@@ -36,3 +36,4 @@ class TimedShot(Shot):
         super().__init__(ship, offset_x, offset_y, vel_x, vel_y)
         self.speed = speed
         self.play_once = True
+

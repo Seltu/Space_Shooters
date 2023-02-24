@@ -18,13 +18,9 @@ class AnimatedSprite(pygame.sprite.Sprite):
             self.h = 0
         self.alpha = 255
         self.path = 'Sprites/enemy_1'
+        self.current_sprite = 0
         if path is not None:
             self.path = path
-            for i in range(0, len(os.listdir(self.path))):
-                image = pygame.image.load(f"{self.path}/tile{i:03d}.png")
-                if rot is not None:
-                    image = rot_center(image, rot)
-                self.sprites.append(image)
             image = pygame.image.load(f"{self.path}/tile000.png")
             self.rect = image.get_rect()
             if w is not None:
@@ -35,8 +31,12 @@ class AnimatedSprite(pygame.sprite.Sprite):
                 self.h = h
             else:
                 self.h = self.rect.h
+            for i in range(0, len(os.listdir(self.path))):
+                image = pygame.transform.scale(pygame.image.load(f"{self.path}/tile{i:03d}.png"), (self.w, self.h))
+                if rot is not None:
+                    image = rot_center(image, rot)
+                self.sprites.append(image)
         self.play_once = play_once
-        self.current_sprite = 0
         self.image = pygame.image.load(f"{self.path}/tile000.png")
 
     def update(self):
@@ -46,7 +46,6 @@ class AnimatedSprite(pygame.sprite.Sprite):
             if self.play_once:
                 self.kill()
         self.image = self.sprites[int(self.current_sprite)]
-        self.image = pygame.transform.scale(self.sprites[int(self.current_sprite)], (self.w, self.h))
         self.image.set_alpha(self.alpha)
 
 

@@ -43,6 +43,7 @@ class Enemy3(EnemyShip):
     def __init__(self, sheet, shot, curve, shoot_delay):
         super().__init__(sheet, shot, curve, shoot_delay)
         self.hp = 30
+        self.aimed = True
         self.shot_speed = 8
         self.shot_time = 180
         self.damage = 1

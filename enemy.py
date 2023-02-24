@@ -6,6 +6,7 @@ class EnemyShip(Ship):
     def __init__(self, sheet, shot, curve, shoot_delay):
         super().__init__()
         self.previous_point = None
+        self.aimed = False
         self.curve = curve
         self.bezier_timer = 0
         self.shoot_time = shoot_delay
