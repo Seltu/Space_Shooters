@@ -15,10 +15,12 @@ class PlayerShip(Ship):
         self.move_speed = 6
         self.damage = 10
         self.hp = 5
-        self.make_ship(sheet, 'Sprites/fire.png', pos)
+        self.make_ship(sheet, 'Sprites/fire', pos)
         self.invincibility_time = 100
         self.invincible_timer = 0
         self.shooting = False
+        self.vel = pygame.math.Vector2(0, 0)
+        self.store = pygame.math.Vector2(0, 0)
 
     def go(self, axis, speed):
         if self.vel[axis] == speed*-1:

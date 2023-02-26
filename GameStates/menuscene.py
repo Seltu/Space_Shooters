@@ -1,11 +1,7 @@
 import pygame.math
 
-from level import Levels
-from player import PlayerShip
-from enemy_types import *
-from config import *
-from animation import AnimatedSprite
 from GameStates.game_state import GameState
+from config import *
 
 
 class MenuState(GameState):
@@ -24,7 +20,7 @@ class MenuState(GameState):
     # Check if an event happens
     def check_event(self, event):
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_KP_ENTER:
+            if event.key == pygame.K_RETURN:
                self.done = True
                menuMusic.fadeout(3000)
 

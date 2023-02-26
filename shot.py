@@ -1,36 +1,25 @@
 import pygame.math
+from animation import AnimatedSprite
 from config import *
 
 
-def rot_center(image, angle):
-    # rotate an image keeping its center and size
-    orig_rect = image.get_rect()
-    rot_image = pygame.transform.rotate(image, angle)
-    rot_rect = orig_rect.copy()
-    rot_rect.center = rot_image.get_rect().center
-    rot_image = rot_image.subsurface(rot_rect).copy()
-    return rot_image
-
-
-class Shot(pygame.sprite.Sprite):
-
+class Shot(AnimatedSprite):
     def __init__(self, ship, offset_x, offset_y, vel_x, vel_y):
-        pygame.sprite.Sprite.__init__(self)
         self.ship = ship
-        self.pos = pygame.math.Vector2(ship.rect.centerx + offset_x, ship.rect.centery + offset_y)
         self.vel = pygame.math.Vector2(vel_x*self.ship.shot_speed, vel_y*self.ship.shot_speed)
+        rot = 0
+        if self.vel.length() > 0:
+            angle = self.vel.normalize().angle_to(pygame.math.Vector2(0, 1))
+            rot = angle
+        super().__init__(0.1, False, ship.shot_sprite, ship.shot_w, ship.shot_h, rot)
+        self.pos = pygame.math.Vector2(ship.rect.centerx + offset_x, ship.rect.centery + offset_y)
         self.cont = 0
-        self.image = ship.shot_sprite
-        self.image = pygame.transform.scale(self.image, (30, 30))
         self.group = pygame.sprite.Group()
         self.rect = self.image.get_rect()
         self.rect.center = [int(self.pos.x), int(self.pos.y)]
-        if self.vel.length() > 0:
-            angle = self.vel.normalize().angle_to(pygame.math.Vector2(0, 1))
-            self.image = rot_center(self.image, angle)
 
     def update(self):
-        # update balls in list
+        super().update()
         self.move()
 
     def move(self):
@@ -40,3 +29,11 @@ class Shot(pygame.sprite.Sprite):
         if 0 > self.rect.x > screen_width - self.rect.width and 0 > self.rect.y > screen_height - self.rect.height:
             self.kill()
             self.ship.shot_list.remove(self)
+
+
+class TimedShot(Shot):
+    def __init__(self, ship, offset_x, offset_y, vel_x, vel_y, speed):
+        super().__init__(ship, offset_x, offset_y, vel_x, vel_y)
+        self.speed = speed
+        self.play_once = True
+

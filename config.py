@@ -81,4 +81,16 @@ waveline5.add(BezierCurve(
     0, -50
 ))
 
+waveline6 = BezierCollection()
+waveline6.add(BezierCurve(
+    100, -50,
+    100, 500,
+    800, 650,
+    1600, 100))
 
+waveline7 = BezierCollection()
+waveline7.add(BezierCurve(
+    1500, -50,
+    1500, 500,
+    800, 650,
+    0, 100))

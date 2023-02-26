@@ -11,12 +11,11 @@ class Ship(AnimatedSprite):
         self.hp = 1
         self.img_ship = []
         self.shot_speed = 4
-        self.shot_list = []
         self.shot_time = 0
         self.shot_sprites = pygame.sprite.Group()
         self.shot_sprite = pygame.image.load("Sprites/testeball.png")
-        self.vel = pygame.math.Vector2(0, 0)
-        self.store = pygame.math.Vector2(0, 0)
+        self.shot_h = 30
+        self.shot_w = 30
         self.shoot = False
         self.shoot_time = 0
         self.dead = False
@@ -30,7 +29,7 @@ class Ship(AnimatedSprite):
         for i in range(0, len(os.listdir(self.path))):
             image = pygame.image.load(f"{self.path}/tile{i:03d}.png")
             self.sprites.append(image)
-        self.shot_sprite = pygame.image.load(shot)
+        self.shot_sprite = shot
         self.rect.center = (pos[0], pos[1])
 
     def shoot_(self):
@@ -45,6 +44,8 @@ class Ship(AnimatedSprite):
             self.kill()
             explosionSoundEffect.play()
             self.dead = True
+            return True
+        return False
 
     def move(self):
         pass
@@ -62,6 +63,5 @@ class Ship(AnimatedSprite):
             if shots is not None:
                 for shot in shots:
                     self.shot_sprites.add(shot)
-                    self.shot_list.append(shot)
             self.shoot = False
             # shot_sound_effect.play()
