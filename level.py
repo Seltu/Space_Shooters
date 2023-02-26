@@ -13,7 +13,7 @@ class Levels:
         self.boss = BossBaron((screen_width / 2, 0))
         self.get_waves()
         self.wall_color = "#d4a941"
-        self.bg_color = "#1C0026"
+        self.bg_color = "#150d28"
 
         # for layout in self.layouts[layout_type - 1]:
         #    self.group.add(wall.Wall(self.wall_color, layout[0], layout[1]))

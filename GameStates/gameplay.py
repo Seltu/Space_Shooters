@@ -1,9 +1,12 @@
+import math
+
 import pygame.math
 
 from level import Levels
 from player import PlayerShip
 from boss_enemies import *
 from config import *
+from config import screen_height
 from animation import AnimatedSprite
 from GameStates.game_state import GameState
 
@@ -23,6 +26,16 @@ class Gameplay(GameState):
         self.wave_progress = 0
         self.level_timer = 0
         self.boss_fight = False
+
+        self.parallax = []
+        for i in range(3):
+            self.image = pygame.image.load(f"Sprites/Parallax/parallax_00{i}.png").convert_alpha()
+            self.parallax.append(self.image)
+        self.parallax_h = self.parallax[0].get_height()
+        self.scroll_parallax_back = 0
+        self.scroll_parallax_middle = 0
+        self.scroll_parallax_fore = 0
+        self.tiles = math.ceil(screen_height / self.parallax_h) + 1
 
         self.done = False
         self.next_state = "GAMEOVER"
@@ -61,6 +74,9 @@ class Gameplay(GameState):
     def update(self, dt):
         self.sprites.update()
         self.ship.shot_sprites.update()
+        self.scroll_parallax_back += 5
+        self.scroll_parallax_middle += 5
+        self.scroll_parallax_fore += 5
         for enemy in self.enemies:
             enemy.shot_sprites.update()
             self.shoot_collision(self.ship, enemy)
@@ -110,10 +126,44 @@ class Gameplay(GameState):
     # Draws Elements
     def draw(self, screen):
         screen.fill(self.background)
+
+        self.draw_parallax_back(screen)
+        self.draw_parallax_middle(screen)
+        self.draw_parallax_fore(screen)
+        screen.blit(self.parallax[1], (0, self.scroll_parallax_middle * 0.5))
+        screen.blit(self.parallax[2], (0, self.scroll_parallax_fore * 0.7))
+
         for enemy in self.enemies:
             enemy.shot_sprites.draw(screen)
         self.sprites.draw(screen)
         self.ship.shot_sprites.draw(screen)
+
+    def draw_parallax_back(self, screen):
+        speed = 0.3
+        for i in range(self.tiles):
+            screen.blit(self.parallax[0], (0, self.scroll_parallax_back * speed))
+            screen.blit(self.parallax[0], (0, -self.parallax_h + self.scroll_parallax_back * speed))
+
+        if abs(self.scroll_parallax_back) > self.parallax_h / 0.3:
+            self.scroll_parallax_back = 0
+
+    def draw_parallax_middle(self, screen):
+        speed = 0.5
+        for i in range(self.tiles):
+            screen.blit(self.parallax[1], (0, -self.parallax_h + self.scroll_parallax_middle * speed))
+            screen.blit(self.parallax[1], (0, -self.parallax_h * 2 + self.scroll_parallax_middle * speed))
+
+        if abs(self.scroll_parallax_middle) > self.parallax_h * 2:
+            self.scroll_parallax_middle = 0
+
+    def draw_parallax_fore(self, screen):
+        speed = 0.7
+        for i in range(self.tiles):
+            screen.blit(self.parallax[2], (0, -self.parallax_h + self.scroll_parallax_fore * speed))
+            screen.blit(self.parallax[2], (0, -self.parallax_h * 2 + self.scroll_parallax_fore * speed))
+
+        if abs(self.scroll_parallax_fore) > self.parallax_h * 1.42:
+            self.scroll_parallax_fore = 0
 
     def shoot_collision(self, ship_one, ship_two):
         if ship_two.dead:
@@ -131,9 +181,9 @@ class Gameplay(GameState):
             if ship_two.lose_hp(ship_one.damage):
                 if ship_two is BossEnemy:
                     self.boss_fight = False
-            explosion = AnimatedSprite(1, True, 'Sprites/Boom')
+            explosion = AnimatedSprite(0.5, True, 'Sprites/Boom', 64, 64)
             self.sprites.add(explosion)
-            explosion.rect.center = close.rect.center
+            explosion.rect.center = close.rect.midtop
             close.kill()
             del close
 

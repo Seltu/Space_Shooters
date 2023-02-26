@@ -4,7 +4,6 @@ from level import Levels
 from player import PlayerShip
 from enemy_types import *
 from config import *
-from config import gameoverMusic
 from animation import AnimatedSprite
 from GameStates.game_state import GameState
 
@@ -25,7 +24,7 @@ class GameOver(GameState):
     # Check if an event happens
     def check_event(self, event):
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_KP_ENTER:
+            if event.key == pygame.K_RETURN:
                self.done = True
                gameoverMusic.fadeout(2000)
 
