@@ -53,6 +53,7 @@ class PlayerShip(Ship):
                       math.cos(self.shot_angle(i)),
                       math.sin(self.shot_angle(i)))
                  for i in range(self.number_of_shots)]
+        shotSoundEffect.play()
         return shots
 
     def move(self):
