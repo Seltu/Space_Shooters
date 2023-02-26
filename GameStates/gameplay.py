@@ -113,7 +113,7 @@ class Gameplay(GameState):
             if closest is not None:
                 enemy.set_target(pygame.math.Vector2(closest.rect.centerx, closest.rect.centery))
         self.progress_level()
-        if self.ship.dead:
+        if len(self.ships) == 0:
             self.done = True
             gameplayMusic.fadeout(2000)
 
@@ -128,6 +128,8 @@ class Gameplay(GameState):
         if self.level_progress >= len(self.level.rounds):
             self.enemies.append(self.level.boss)
             self.sprites.add(self.level.boss)
+            if self.level.boss.aimed:
+                self.aim_enemies.append(self.level.boss)
             self.boss_fight = True
             return
         current_round = self.level.rounds[self.level_progress]

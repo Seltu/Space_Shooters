@@ -15,7 +15,8 @@ class PlayerShip(Ship):
         self.move_speed = 6
         self.damage = 10
         self.hp = 5
-        self.make_ship(sheet, 'Sprites/fire', pos)
+        self.make_ship(sheet, 'Sprites/fire')
+        self.rect.center = (pos[0], pos[1])
         self.invincibility_time = 100
         self.invincible_timer = 0
         self.shooting = False
@@ -50,7 +51,7 @@ class PlayerShip(Ship):
         self.shooting = not self.shooting
 
     def create_shots(self):
-        shots = [Shot(self, 40 * math.cos(self.shot_angle(i)),
+        shots = [Shot(self, 8 + 40 * math.cos(self.shot_angle(i)),
                       40 * math.sin(self.shot_angle(i)),
                       math.cos(self.shot_angle(i)),
                       math.sin(self.shot_angle(i)))
