@@ -42,6 +42,7 @@ class Ship(AnimatedSprite):
         self.hp -= damage
         if self.hp <= 0:
             self.kill()
+            explosionSoundEffect.play()
             self.dead = True
             return True
         return False

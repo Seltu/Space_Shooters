@@ -24,6 +24,9 @@ class Gameplay(GameState):
         self.level_timer = 0
         self.boss_fight = False
 
+        self.done = False
+        self.next_state = "GAMEOVER"
+
     # Check if an event happens
     def check_event(self, event):
         if event.type == pygame.KEYUP:
@@ -65,8 +68,9 @@ class Gameplay(GameState):
         for enemy in self.aim_enemies:
             enemy.set_target(pygame.math.Vector2(self.ship.rect.centerx, self.ship.rect.centery))
         self.progress_level()
-        if self.ship is None:
-            print('aaaaa')
+        if self.ship.dead:
+            self.done = True
+            gameplayMusic.fadeout(2000)
 
     def progress_level(self):
         if self.level_timer > 0:
