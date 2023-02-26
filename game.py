@@ -23,6 +23,10 @@ class Game:
         self.state.done = False
         self.state_name = next_state
         self.state = self.states[self.state_name]
+        if self.state_name == "GAMEPLAY":
+            config.gameplayMusic.play(-1, 0, 3000)
+        if self.state_name == "GAMEOVER":
+            config.gameoverMusic.play(-1, 0, 2000)
         self.state.__init__()
 
     def update(self, dt):

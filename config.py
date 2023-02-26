@@ -10,6 +10,16 @@ clk = pygame.time.Clock()
 fps = 60
 shot_time = 15
 
+menuMusic = pygame.mixer.Sound("Sounds/MenuMusic.wav")
+gameplayMusic = pygame.mixer.Sound("Sounds/gameplayMusic.wav")
+gameplayMusic.set_volume(0.3)
+gameoverMusic = pygame.mixer.Sound("Sounds/gameover.wav")
+
+shotSoundEffect = pygame.mixer.Sound("Sounds/shotBeam.wav")
+shotSoundEffect.set_volume(0.15)
+explosionSoundEffect = pygame.mixer.Sound("Sounds/explosionSoundEffect.wav")
+explosionSoundEffect.set_volume(0.7)
+
 waveline1 = BezierCollection()
 waveline1.add(BezierCurve(
     1100, -50,
