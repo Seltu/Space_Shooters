@@ -18,13 +18,29 @@ class AnimatedSprite(pygame.sprite.Sprite):
             self.h = 0
         self.alpha = 255
         self.path = 'Sprites/enemy_1'
+        self.load_path(path, w, h, rot)
         self.current_sprite = 0
+        self.play_once = play_once
+        self.image = pygame.image.load(f"{self.path}/tile000.png")
+        self.rect = self.image.get_rect()
+
+    def update(self):
+        self.current_sprite += self.speed
+        if self.current_sprite >= len(self.sprites):
+            self.current_sprite = 0
+            if self.play_once:
+                self.kill()
+        self.image = self.sprites[int(self.current_sprite)]
+        self.image.set_alpha(self.alpha)
+
+    def load_path(self, path, w=None, h=None, rot=None):
+        self.sprites = []
         if path is not None:
             self.path = path
             image = pygame.image.load(f"{self.path}/tile000.png")
             self.rect = image.get_rect()
             if w is not None:
-                self.h = h
+                self.w = w
             else:
                 self.w = self.rect.w
             if w is not None:
@@ -36,17 +52,6 @@ class AnimatedSprite(pygame.sprite.Sprite):
                 if rot is not None:
                     image = rot_center(image, rot)
                 self.sprites.append(image)
-        self.play_once = play_once
-        self.image = pygame.image.load(f"{self.path}/tile000.png")
-
-    def update(self):
-        self.current_sprite += self.speed
-        if self.current_sprite >= len(self.sprites):
-            self.current_sprite = 0
-            if self.play_once:
-                self.kill()
-        self.image = self.sprites[int(self.current_sprite)]
-        self.image.set_alpha(self.alpha)
 
 
 def rot_center(image, angle):

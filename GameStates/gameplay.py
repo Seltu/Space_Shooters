@@ -1,10 +1,11 @@
 import math
-
+import random
 import pygame.math
 
 from level import Levels
 from player import PlayerShip
-from boss_enemies import *
+from boss_enemies import BossEnemy
+from pickup import *
 from config import *
 from config import screen_height
 from animation import AnimatedSprite
@@ -19,9 +20,17 @@ class Gameplay(GameState):
         self.background = level.get_bg_color()
         self.level = level
         self.sprites = level.get_group()
-        self.ship = PlayerShip('Sprites/Player', (screen_width / 2, screen_height - 140))
+        self.ships = pygame.sprite.Group()
+        self.pickups = pygame.sprite.Group()
+        self.temp_pickups = []
+        ship = PlayerShip('Sprites/Player', (screen_width / 2 - 100, screen_height - 140))
+        ship2 = PlayerShip('Sprites/Player2', (screen_width / 2 + 100, screen_height - 140))
+        self.players = [ship, ship2]
+        self.ships.add(ship)
+        self.ships.add(ship2)
         self.enemies = []
-        self.sprites.add(self.ship)
+        for ship in self.ships.sprites():
+            self.sprites.add(ship)
         self.level_progress = 0
         self.wave_progress = 0
         self.level_timer = 0
@@ -44,26 +53,51 @@ class Gameplay(GameState):
     def check_event(self, event):
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_UP:
-                self.ship.stop(1, -1)
+                self.players[0].stop(1, -1)
             if event.key == pygame.K_DOWN:
-                self.ship.stop(1, 1)
+                self.players[0].stop(1, 1)
             if event.key == pygame.K_LEFT:
-                self.ship.stop(0, -1)
+                self.players[0].stop(0, -1)
             if event.key == pygame.K_RIGHT:
-                self.ship.stop(0, 1)
+                self.players[0].stop(0, 1)
             if event.key == pygame.K_z:
-                self.ship.shoot_()
+                self.players[0].shoot_()
+        # PLAYER 2
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_w:
+                self.players[1].stop(1, -1)
+            if event.key == pygame.K_s:
+                self.players[1].stop(1, 1)
+            if event.key == pygame.K_a:
+                self.players[1].stop(0, -1)
+            if event.key == pygame.K_d:
+                self.players[1].stop(0, 1)
+            if event.key == pygame.K_e:
+                self.players[1].shoot_()
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_z:
-                self.ship.shoot_()
+                self.players[0].shoot_()
             if event.key == pygame.K_UP:
-                self.ship.go(1, -1)
+                self.players[0].go(1, -1)
             if event.key == pygame.K_DOWN:
-                self.ship.go(1, 1)
+                self.players[0].go(1, 1)
             if event.key == pygame.K_LEFT:
-                self.ship.go(0, -1)
+                self.players[0].go(0, -1)
             if event.key == pygame.K_RIGHT:
-                self.ship.go(0, 1)
+                self.players[0].go(0, 1)
+            # PLAYER 2
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_e:
+                self.players[1].shoot_()
+            if event.key == pygame.K_w:
+                self.players[1].go(1, -1)
+            if event.key == pygame.K_s:
+                self.players[1].go(1, 1)
+            if event.key == pygame.K_a:
+                self.players[1].go(0, -1)
+            if event.key == pygame.K_d:
+                self.players[1].go(0, 1)
+        # DEBUG
             if event.key == pygame.K_r:
                 self.level_progress = 0
                 self.wave_progress = 0
@@ -77,14 +111,27 @@ class Gameplay(GameState):
         self.scroll_parallax_back += 5
         self.scroll_parallax_middle += 5
         self.scroll_parallax_fore += 5
+        self.pickups.update()
+        
+        for ship in self.ships.sprites():
+            ship.shot_sprites.update()
+            for pickup in self.pickups.sprites():
+                self.pickup_collision(ship, pickup)
+            for pickup in self.temp_pickups:
+                pickup.wear(ship)
+                
         for enemy in self.enemies:
             enemy.shot_sprites.update()
-            self.shoot_collision(self.ship, enemy)
-            self.shoot_collision(enemy, self.ship)
+            for ship in self.ships.sprites():
+                self.shoot_collision(ship, enemy)
+                self.shoot_collision(enemy, ship)
         for enemy in self.aim_enemies:
-            enemy.set_target(pygame.math.Vector2(self.ship.rect.centerx, self.ship.rect.centery))
+            closest = self.get_closest_to(enemy, self.ships)
+            if closest is not None:
+                enemy.set_target(pygame.math.Vector2(closest.rect.centerx, closest.rect.centery))
+                
         self.progress_level()
-        if self.ship.dead:
+        if len(self.ships) == 0:
             self.done = True
             gameplayMusic.fadeout(2000)
 
@@ -99,6 +146,8 @@ class Gameplay(GameState):
         if self.level_progress >= len(self.level.rounds):
             self.enemies.append(self.level.boss)
             self.sprites.add(self.level.boss)
+            if self.level.boss.aimed:
+                self.aim_enemies.append(self.level.boss)
             self.boss_fight = True
             return
         current_round = self.level.rounds[self.level_progress]
@@ -136,7 +185,9 @@ class Gameplay(GameState):
         for enemy in self.enemies:
             enemy.shot_sprites.draw(screen)
         self.sprites.draw(screen)
-        self.ship.shot_sprites.draw(screen)
+        self.pickups.draw(screen)
+        for ship in self.ships.sprites():
+            ship.shot_sprites.draw(screen)
 
     def draw_parallax_back(self, screen):
         speed = 0.3
@@ -170,20 +221,58 @@ class Gameplay(GameState):
             return
         if len(ship_one.shot_sprites) <= 0:
             return
-        close = ship_one.shot_sprites.sprites()[0]
-        closest = close.pos.distance_to(pygame.math.Vector2(ship_two.rect.centerx, ship_two.rect.centery))
-        for shot in ship_one.shot_sprites:
-            distance = shot.pos.distance_to(pygame.math.Vector2(ship_two.rect.centerx, ship_two.rect.centery))
-            if distance < closest:
-                closest = distance
-                close = shot
+        close = self.get_closest_to(ship_two, ship_one.shot_sprites)
         if pygame.sprite.collide_mask(close, ship_two):
             if ship_two.lose_hp(ship_one.damage):
                 if ship_two is BossEnemy:
                     self.boss_fight = False
+                    pickup = ShotPickup()
+                    self.sprites.add(pickup)
+                    pickup.rect.center = close.rect.center
+                else:
+                    if random.randint(0, 100) <= 10:
+                        self.random_pickup(ship_two.rect.center)
+                        
             explosion = AnimatedSprite(0.5, True, 'Sprites/Boom', 64, 64)
             self.sprites.add(explosion)
             explosion.rect.center = close.rect.midtop
             close.kill()
             del close
 
+    def random_pickup(self, pos):
+        choice = random.randint(0, 3)
+        if choice == 0:
+            pickup = HealthPickup()
+        elif choice == 1:
+            pickup = SpeedPickup()
+        elif choice == 2:
+            pickup = ShotSpeedPickup()
+        elif choice == 3:
+            pickup = ShotTempPickup()
+        else:
+            pickup = HealthPickup()
+        self.pickups.add(pickup)
+        if pickup.temporary:
+            self.temp_pickups.append(pickup)
+        pickup.rect.center = pos
+
+    @staticmethod
+    def get_closest_to(sprite, group):
+        if len(group) == 0:
+            return
+        close = group.sprites()[0]
+        closest = pygame.math.Vector2(close.rect.centerx, close.rect.centery).distance_to(pygame.math.Vector2(
+            sprite.rect.centerx, sprite.rect.centery))
+        for other in group:
+            distance = pygame.math.Vector2(other.rect.centerx, other.rect.centery).distance_to(pygame.math.Vector2(
+                sprite.rect.centerx, sprite.rect.centery))
+            if distance < closest:
+                closest = distance
+                close = other
+        return close
+
+    @staticmethod
+    def pickup_collision(ship, pickup):
+        if pygame.sprite.collide_mask(ship, pickup):
+            pickup.effect(ship)
+            pickup.kill()

@@ -7,7 +7,7 @@ from config import *
 class Ship(AnimatedSprite):
     def __init__(self):
         super().__init__(0.1, False)
-        self.damage = 0
+        self.damage = 1
         self.hp = 1
         self.img_ship = []
         self.shot_speed = 4
@@ -20,17 +20,9 @@ class Ship(AnimatedSprite):
         self.shoot_time = 0
         self.dead = False
 
-    def make_ship(self, path, shot, pos):
-        self.path = path
-        image = pygame.image.load(f"{self.path}/tile000.png")
-        self.rect = image.get_rect()
-        self.w = self.rect.w
-        self.h = self.rect.h
-        for i in range(0, len(os.listdir(self.path))):
-            image = pygame.image.load(f"{self.path}/tile{i:03d}.png")
-            self.sprites.append(image)
+    def make_ship(self, path, shot):
+        self.load_path(path)
         self.shot_sprite = shot
-        self.rect.center = (pos[0], pos[1])
 
     def shoot_(self):
         self.shoot = True
