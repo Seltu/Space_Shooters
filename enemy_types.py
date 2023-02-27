@@ -3,15 +3,17 @@ import math
 
 from enemy import EnemyShip
 from shot import Shot
+from shot import SplitShot
 
 
 class Enemy1(EnemyShip):
-    def __init__(self, sheet, shot, curve, shoot_delay):
-        super().__init__(sheet, shot, curve, shoot_delay)
+    def __init__(self, curve, shoot_delay):
+        super().__init__(curve, shoot_delay)
         self.hp = 20
         self.shot_speed = 5
         self.shot_time = 150
         self.damage = 1
+        self.make_ship('Sprites/enemy_1', 'Sprites/enemy_fire')
 
     def create_shots(self):
         shots = [Shot(self, -20, 0, 0, 1),
@@ -20,13 +22,14 @@ class Enemy1(EnemyShip):
 
 
 class Enemy2(EnemyShip):
-    def __init__(self, sheet, shot, curve, shoot_delay):
-        super().__init__(sheet, shot, curve, shoot_delay)
+    def __init__(self, curve, shoot_delay):
+        super().__init__(curve, shoot_delay)
         self.hp = 40
         self.shot_speed = 5
         self.shot_time = 150
         self.damage = 1
         self.shot_tilt = 0
+        self.make_ship('Sprites/enemy_2', 'Sprites/enemy_fire2')
 
     def create_shots(self):
         quantity = 6
@@ -40,8 +43,8 @@ class Enemy2(EnemyShip):
 
 
 class Enemy3(EnemyShip):
-    def __init__(self, sheet, shot, curve, shoot_delay):
-        super().__init__(sheet, shot, curve, shoot_delay)
+    def __init__(self, curve, shoot_delay):
+        super().__init__(curve, shoot_delay)
         self.hp = 30
         self.aimed = True
         self.shot_speed = 8
@@ -49,6 +52,7 @@ class Enemy3(EnemyShip):
         self.damage = 1
         self.shot_tilt = 0
         self.target = pygame.math.Vector2(0, 0)
+        self.make_ship('Sprites/enemy_3', 'Sprites/enemy_fire3')
 
     def create_shots(self):
         shot_direction = pygame.math.Vector2(self.target.x - self.rect.centerx,
@@ -61,8 +65,8 @@ class Enemy3(EnemyShip):
 
 
 class Enemy4(EnemyShip):
-    def __init__(self, sheet, shot, curve, shoot_delay):
-        super().__init__(sheet, shot, curve, shoot_delay)
+    def __init__(self, curve, shoot_delay):
+        super().__init__(curve, shoot_delay)
         self.hp = 10
         self.shot_speed = 6
         self.shot_time = 8
@@ -70,6 +74,7 @@ class Enemy4(EnemyShip):
         self.shot_tilt = math.pi/2-math.pi*0.2
         self.shot_h = 50
         self.shot_w = 50
+        self.make_ship('Sprites/enemy_4', 'Sprites/enemy_fire4')
 
     def create_shots(self):
         shots = [Shot(self, 10 * math.cos(2 * math.pi + self.shot_tilt),
@@ -84,13 +89,30 @@ class Enemy4(EnemyShip):
 
 
 class BaronMinion(EnemyShip):
-    def __init__(self, sheet, shot, curve, shoot_delay):
-        super().__init__(sheet, shot, curve, shoot_delay)
+    def __init__(self, curve, shoot_delay):
+        super().__init__(curve, shoot_delay)
         self.hp = 10
         self.shot_speed = 4
         self.shot_time = 130
         self.damage = 1
+        self.make_ship('Sprites/minion_baron', 'Sprites/minion_baron_fire')
 
     def create_shots(self):
         shots = [Shot(self, 0, 0, -1, 1), Shot(self, 0, 0, 1, 1)]
+        return shots
+
+
+class Enemy5(EnemyShip):
+    def __init__(self, curve, shoot_delay):
+        super().__init__(curve, shoot_delay)
+        self.hp = 20
+        self.shot_speed = 5
+        self.shot_time = 150
+        self.damage = 1
+        self.shot_w = 50
+        self.shot_h = 50
+        self.make_ship('Sprites/enemy_5', 'Sprites/enemy_fire5')
+
+    def create_shots(self):
+        shots = [SplitShot(self, 0, 0, 0, 1, 30, 4)]
         return shots

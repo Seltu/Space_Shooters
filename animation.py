@@ -17,12 +17,15 @@ class AnimatedSprite(pygame.sprite.Sprite):
         else:
             self.h = 0
         self.alpha = 255
-        self.path = 'Sprites/enemy_1'
-        self.load_path(path, w, h, rot)
-        self.current_sprite = 0
-        self.play_once = play_once
+        if path is not None:
+            self.path = path
+        else:
+            self.path = 'Sprites/enemy_1'
         self.image = pygame.image.load(f"{self.path}/tile000.png")
         self.rect = self.image.get_rect()
+        self.load_path(self.path, w, h, rot)
+        self.current_sprite = 0
+        self.play_once = play_once
 
     def update(self):
         self.current_sprite += self.speed
@@ -35,29 +38,29 @@ class AnimatedSprite(pygame.sprite.Sprite):
 
     def load_path(self, path, w=None, h=None, rot=None):
         self.sprites = []
-        if path is not None:
-            self.path = path
-            image = pygame.image.load(f"{self.path}/tile000.png")
-            self.rect = image.get_rect()
-            if w is not None:
-                self.w = w
-            else:
-                self.w = self.rect.w
-            if w is not None:
-                self.h = h
-            else:
-                self.h = self.rect.h
-            for i in range(0, len(os.listdir(self.path))):
-                image = pygame.transform.scale(pygame.image.load(f"{self.path}/tile{i:03d}.png"), (self.w, self.h))
-                if rot is not None:
-                    image = rot_center(image, rot)
-                self.sprites.append(image)
+        self.path = path
+        self.image = pygame.image.load(f"{self.path}/tile000.png")
+        self.rect.width = self.image.get_rect().width
+        self.rect.height = self.image.get_rect().height
+        if w is not None:
+            self.w = w
+        else:
+            self.w = self.rect.w
+        if w is not None:
+            self.h = h
+        else:
+            self.h = self.rect.h
+        for i in range(0, len(os.listdir(self.path))):
+            image = pygame.transform.scale(pygame.image.load(f"{self.path}/tile{i:03d}.png"), (self.w, self.h))
+            if rot is not None:
+                image = self.rot_center(image, rot)
+            self.sprites.append(image)
 
-
-def rot_center(image, angle):
-    orig_rect = image.get_rect()
-    rot_image = pygame.transform.rotate(image, angle)
-    rot_rect = orig_rect.copy()
-    rot_rect.center = rot_image.get_rect().center
-    rot_image = rot_image.subsurface(rot_rect).copy()
-    return rot_image
+    @staticmethod
+    def rot_center(image, angle):
+        orig_rect = image.get_rect()
+        rot_image = pygame.transform.rotate(image, angle)
+        rot_rect = orig_rect.copy()
+        rot_rect.center = rot_image.get_rect().center
+        rot_image = rot_image.subsurface(rot_rect).copy()
+        return rot_image

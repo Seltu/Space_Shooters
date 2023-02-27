@@ -1,3 +1,5 @@
+import math
+
 import pygame.math
 from animation import AnimatedSprite
 from config import *
@@ -56,3 +58,27 @@ class BounceShot(Shot):
         if self.bounce < 0:
             self.kill()
 
+
+class SplitShot(Shot):
+    def __init__(self, ship, offset_x, offset_y, vel_x, vel_y, time, split):
+        super().__init__(ship, offset_x, offset_y, vel_x, vel_y)
+        self.timer = time
+        self.split = split
+        self.shot_speed = self.ship.shot_speed
+        self.shot_sprite = self.ship.shot_sprite
+        self.shot_w = self.ship.shot_w * 3/4
+        self.shot_h = self.ship.shot_h * 3/4
+
+    def update(self):
+        super().update()
+        if self.timer > 0:
+            self.timer -= 1
+        else:
+            shots = [Shot(self, 10 * math.cos(i * 2 * math.pi / self.split + math.pi / self.split),
+                          10 * math.sin(i * 2 * math.pi / self.split + math.pi / self.split),
+                          math.cos(i * 2 * math.pi / self.split + math.pi / self.split),
+                          math.sin(i * 2 * math.pi / self.split + math.pi / self.split))
+                     for i in range(self.split)]
+            for shot in shots:
+                self.ship.shot_sprites.add(shot)
+            self.kill()
