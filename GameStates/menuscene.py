@@ -15,7 +15,7 @@ class MenuState(GameState):
         self.press_rect = self.press.get_rect(topleft=(500, 650))
         self.logo = pygame.image.load("Sprites/UI/SPACE SHOOTERS.png")
         self.logo_rect = self.logo.get_rect(topleft=(125, 150))
-        menuMusic.play()
+        menuMusic.play(-1)
 
     # Check if an event happens
     def check_event(self, event):
