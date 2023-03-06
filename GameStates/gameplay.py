@@ -11,8 +11,8 @@ from config import screen_height
 from animation import AnimatedSprite
 from GameStates.game_state import GameState
 
-game_level = 0
-on_boss = False
+game_level = 2
+on_boss = True
 
 
 class Gameplay(GameState):
@@ -184,6 +184,7 @@ class Gameplay(GameState):
             self.next_state = "WIN"
             game_level = 0
             on_boss = False
+            return
 
         if self.level_progress >= len(self.level.rounds):
             on_boss = True
