@@ -27,6 +27,8 @@ class Game:
             config.gameplayMusic.play(-1, 0, 3000)
         if self.state_name == "GAMEOVER":
             config.gameoverMusic.play(-1, 0, 2000)
+        if self.state_name == "WIN":
+            config.gameWinMusic.play(-1, 0, 3000)
         self.state.__init__()
 
     def update(self, dt):

@@ -26,7 +26,7 @@ class GameOver(GameState):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RETURN:
                self.done = True
-               gameoverMusic.fadeout(2000)
+               pygame.mixer.fadeout(1500)
 
     def draw(self, screen):
         screen.blit(self.background, self.background_rect)
