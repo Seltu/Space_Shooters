@@ -184,6 +184,7 @@ class Gameplay(GameState):
             self.next_state = "WIN"
             game_level = 0
             on_boss = False
+            return
 
         if self.level_progress >= len(self.level.rounds):
             on_boss = True
