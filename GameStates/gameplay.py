@@ -182,6 +182,7 @@ class Gameplay(GameState):
         if game_level > 2:
             self.done = True
             self.next_state = "WIN"
+            pygame.mixer.fadeout(1500)
             game_level = 0
             on_boss = False
             return
