@@ -4,19 +4,22 @@ import pygame.math
 
 from level import Levels
 from player import PlayerShip
-from boss_enemies import BossEnemy
 from pickup import *
 from config import *
 from config import screen_height
 from animation import AnimatedSprite
 from GameStates.game_state import GameState
 
+game_level = 0
+on_boss = False
+
 
 class Gameplay(GameState):
     def __init__(self):
+        global game_level, on_boss
         super().__init__()
         self.aim_enemies = []
-        level = Levels(0)
+        level = Levels(game_level)
         self.background = level.get_bg_color()
         self.level = level
         self.sprites = level.get_group()
@@ -32,9 +35,12 @@ class Gameplay(GameState):
         for ship in self.ships.sprites():
             self.sprites.add(ship)
         self.level_progress = 0
+        if on_boss:
+            self.level_progress = 99
         self.wave_progress = 0
         self.level_timer = 0
         self.boss_fight = False
+        self.level_power()
 
         self.parallax = []
         for i in range(3):
@@ -49,8 +55,19 @@ class Gameplay(GameState):
         self.done = False
         self.next_state = "GAMEOVER"
 
+    def level_power(self):
+        global game_level
+        for ship in self.ships.sprites():
+            ship.number_of_shots = 1+game_level
+            ship.damage = 10-game_level*2
+            ship.max_hp = 5+game_level
+            ship.move_speed = 6+game_level
+            ship.shot_time = 10
+            ship.hp = ship.max_hp
+
     # Check if an event happens
     def check_event(self, event):
+        global on_boss
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_UP:
                 self.players[0].stop(1, -1)
@@ -60,10 +77,9 @@ class Gameplay(GameState):
                 self.players[0].stop(0, -1)
             if event.key == pygame.K_RIGHT:
                 self.players[0].stop(0, 1)
-            if event.key == pygame.K_z:
-                self.players[0].shoot_()
+            if event.key == pygame.K_m:
+                self.players[0].stop_shoot()
         # PLAYER 2
-        if event.type == pygame.KEYUP:
             if event.key == pygame.K_w:
                 self.players[1].stop(1, -1)
             if event.key == pygame.K_s:
@@ -72,10 +88,10 @@ class Gameplay(GameState):
                 self.players[1].stop(0, -1)
             if event.key == pygame.K_d:
                 self.players[1].stop(0, 1)
-            if event.key == pygame.K_e:
-                self.players[1].shoot_()
+            if event.key == pygame.K_g:
+                self.players[1].stop_shoot()
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_z:
+            if event.key == pygame.K_m:
                 self.players[0].shoot_()
             if event.key == pygame.K_UP:
                 self.players[0].go(1, -1)
@@ -86,8 +102,7 @@ class Gameplay(GameState):
             if event.key == pygame.K_RIGHT:
                 self.players[0].go(0, 1)
             # PLAYER 2
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_e:
+            if event.key == pygame.K_g:
                 self.players[1].shoot_()
             if event.key == pygame.K_w:
                 self.players[1].go(1, -1)
@@ -100,14 +115,15 @@ class Gameplay(GameState):
         # DEBUG
             if event.key == pygame.K_r:
                 self.level_progress = 0
-                self.wave_progress = 0
-            if event.key == pygame.K_b:
+                self.done = True
+                on_boss = False
+                self.next_state = "GAMEPLAY"
+            if event.key == pygame.K_QUOTE:
                 self.level_progress = 99
                 self.wave_progress = 99
 
     def update(self, dt):
         self.sprites.update()
-        self.ship.shot_sprites.update()
         self.scroll_parallax_back += 5
         self.scroll_parallax_middle += 5
         self.scroll_parallax_fore += 5
@@ -143,12 +159,18 @@ class Gameplay(GameState):
             if self.level.boss.summon:
                 self.add_waves(self.level.boss.create_waves())
             return
+        if game_level > 2:
+            self.done = True
+            self.next_state = "WIN"
         if self.level_progress >= len(self.level.rounds):
+            global on_boss
+            on_boss = True
             self.enemies.append(self.level.boss)
             self.sprites.add(self.level.boss)
             if self.level.boss.aimed:
                 self.aim_enemies.append(self.level.boss)
             self.boss_fight = True
+            self.level_timer = 200
             return
         current_round = self.level.rounds[self.level_progress]
         self.add_waves(current_round)
@@ -184,6 +206,9 @@ class Gameplay(GameState):
 
         for enemy in self.enemies:
             enemy.shot_sprites.draw(screen)
+            if enemy.dead and not enemy.shot_sprites:
+                self.enemies.remove(enemy)
+                del enemy
         self.sprites.draw(screen)
         self.pickups.draw(screen)
         for ship in self.ships.sprites():
@@ -217,6 +242,7 @@ class Gameplay(GameState):
             self.scroll_parallax_fore = 0
 
     def shoot_collision(self, ship_one, ship_two):
+        global game_level, on_boss
         if ship_two.dead:
             return
         if len(ship_one.shot_sprites) <= 0:
@@ -224,15 +250,21 @@ class Gameplay(GameState):
         close = self.get_closest_to(ship_two, ship_one.shot_sprites)
         if pygame.sprite.collide_mask(close, ship_two):
             if ship_two.lose_hp(ship_one.damage):
-                if ship_two is BossEnemy:
+                if ship_two.boss:
                     self.boss_fight = False
-                    pickup = ShotPickup()
-                    self.sprites.add(pickup)
-                    pickup.rect.center = close.rect.center
+                    on_boss = False
+                    game_level += 1
+                    self.level_progress = 0
+                    self.wave_progress = 0
+                    while len(self.ships) < len(self.players):
+                        self.revive_player()
+                    self.level_power()
+                    self.temp_pickups.clear()
+                    self.level.get_level(game_level)
+                    self.level_timer = 200
                 else:
                     if random.randint(0, 100) <= 10:
                         self.random_pickup(ship_two.rect.center)
-                        
             explosion = AnimatedSprite(0.5, True, 'Sprites/Boom', 64, 64)
             self.sprites.add(explosion)
             explosion.rect.center = close.rect.midtop
@@ -271,8 +303,20 @@ class Gameplay(GameState):
                 close = other
         return close
 
-    @staticmethod
-    def pickup_collision(ship, pickup):
+    def revive_player(self):
+        for player in self.players:
+            if player.dead:
+                player.hp = 2
+                player.invincible_timer = player.invincibility_time
+                self.ships.add(player)
+                self.sprites.add(player)
+                player.dead = False
+                break
+
+    def pickup_collision(self, ship, pickup):
         if pygame.sprite.collide_mask(ship, pickup):
-            pickup.effect(ship)
+            if pickup.type == 1 and len(self.ships) < len(self.players):
+                self.revive_player()
+            else:
+                pickup.effect(ship)
             pickup.kill()

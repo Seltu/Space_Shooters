@@ -14,6 +14,7 @@ class PlayerShip(Ship):
         self.shot_speed = 10
         self.move_speed = 6
         self.damage = 10
+        self.max_hp = 5
         self.hp = 5
         self.make_ship(sheet, 'Sprites/fire')
         self.rect.center = (pos[0], pos[1])
@@ -48,7 +49,10 @@ class PlayerShip(Ship):
             return -math.pi/2
 
     def shoot_(self):
-        self.shooting = not self.shooting
+        self.shooting = True
+
+    def stop_shoot(self):
+        self.shooting = False
 
     def create_shots(self):
         shots = [Shot(self, 8 + 40 * math.cos(self.shot_angle(i)),

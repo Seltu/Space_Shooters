@@ -7,6 +7,7 @@ class Pickup(pygame.sprite.Sprite):
         self.image = pygame.image.load("Sprites/fire/tile000.png")
         self.rect = self.image.get_rect()
         self.temporary = False
+        self.type = 0
 
     def update(self):
         super().update()
@@ -19,22 +20,13 @@ class Pickup(pygame.sprite.Sprite):
 class HealthPickup(Pickup):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("Sprites/enemy_fire/tile000.png")
+        self.image = pygame.image.load("Sprites/pickup_hp.png")
         self.rect = self.image.get_rect()
+        self.type = 1
 
     def effect(self, ship):
         if ship.hp < 5:
             ship.hp += 1
-
-
-class ShotPickup(Pickup):
-    def __init__(self):
-        super().__init__()
-        self.image = pygame.image.load("Sprites/baron_fire/tile000.png")
-        self.rect = self.image.get_rect()
-
-    def effect(self, ship):
-        ship.number_of_shots += 1
 
 
 class TemporaryPickup(Pickup):
@@ -64,7 +56,7 @@ class TemporaryPickup(Pickup):
 class SpeedPickup(TemporaryPickup):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("Sprites/enemy_fire3/tile000.png")
+        self.image = pygame.image.load("Sprites/pickup_speed.png")
         self.rect = self.image.get_rect()
 
     def effect(self, ship):
@@ -78,7 +70,7 @@ class SpeedPickup(TemporaryPickup):
 class ShotSpeedPickup(TemporaryPickup):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("Sprites/enemy_fire2/tile000.png")
+        self.image = pygame.image.load("Sprites/pickup_boost.png")
         self.rect = self.image.get_rect()
 
     def effect(self, ship):
@@ -92,7 +84,7 @@ class ShotSpeedPickup(TemporaryPickup):
 class ShotTempPickup(TemporaryPickup):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("Sprites/enemy_fire4/tile000.png")
+        self.image = pygame.image.load("Sprites/pickup_shot.png")
         self.rect = self.image.get_rect()
 
     def effect(self, ship):

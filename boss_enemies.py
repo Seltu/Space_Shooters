@@ -20,6 +20,7 @@ class BossEnemy(Ship):
         self.summon = True
         self.changed_shot = False
         self.target = None
+        self.boss = True
 
     def set_target(self, target):
         self.target = target
@@ -140,7 +141,7 @@ class BossJester(BossEnemy):
         self.speed = 0.05
         self.shot_speed = 5
         self.shot_time = 10
-        self.boss_timer = 0.8
+        self.boss_timer = 0.4
         self.boss_step = -1
         self.boss_cycle = 3
         self.load_path('Sprites/boss_jester/idle', 484, 254)
@@ -233,7 +234,7 @@ class BossJester(BossEnemy):
             if self.boss_step == 2:
                 return right
         if self.boss_step == 3:
-            self.change_shot(50, h=70, w=70, speed=15)
+            self.change_shot(50, h=70, w=70, speed=10)
             self.aux = not self.aux
             if self.aux:
                 self.blue = not self.blue
@@ -262,7 +263,7 @@ class BossJester(BossEnemy):
                 waves = [Wave(3, 1, waveline3.shift(-400, 0)), Wave(3, 1, waveline4.shift(400, 0))]
             else:
                 waves = [Wave(3, 2, waveline3.shift(-400, 0)), Wave(3, 2, waveline4.shift(400, 0)),
-                         Wave(2, 5, waveline5.shift(0, -200))]
+                         Wave(2, 6, waveline5.shift(0, -200))]
         elif self.boss_step == 2:
             waves = [Wave(0, 10, waveline5.shift(0, -150)), Wave(1, 5, waveline5.shift(0, -100))]
         elif self.boss_step == 3 and self.health_stage >= 2:
@@ -274,10 +275,10 @@ class BossJester(BossEnemy):
 class BossMonarch(BossEnemy):
     def __init__(self, pos):
         super().__init__(pos)
-        self.hp = 6000
+        self.hp = 10000
         self.shot_speed = 5
         self.shot_time = 10
-        self.boss_timer = 0.8
+        self.boss_timer = 0.5
         self.boss_step = -1
         self.boss_cycle = 5
         self.make_ship('Sprites/boss_monarch', 'Sprites/monarch_fire')
@@ -290,23 +291,24 @@ class BossMonarch(BossEnemy):
         self.direction = pygame.math.Vector2(1, 1)
         self.move_speed = 2
         self.shot_tilt = 0
+        self.entered = False
 
     def move(self):
+        if self.boss_timer > 0.9:
+            self.alpha = 255 - 255 * (self.boss_timer - 0.9) * 10
+        elif self.boss_timer < 0.2:
+            new_alpha = 255 - 255 * (1.1 - self.boss_timer * 11)
+            if new_alpha > 0:
+                self.alpha = new_alpha
+            else:
+                self.alpha = 0
+        else:
+            self.alpha = 255
         if self.boss_step < 0:
             self.pos.y += 1
         else:
             self.pos.x += self.direction.x * self.move_speed * (1 - self.boss_timer)
             self.pos.y += self.direction.y * self.move_speed * (1 - self.boss_timer)
-            if self.boss_timer > 0.9:
-                self.alpha = 255 - 255 * (self.boss_timer - 0.9) * 10
-            elif self.boss_timer < 0.2:
-                new_alpha = 255 - 255 * (1.1 - self.boss_timer * 11)
-                if new_alpha > 0:
-                    self.alpha = new_alpha
-                else:
-                    self.alpha = 0
-            else:
-                self.alpha = 255
         if self.pos.x > 1600 - self.rect.width / 2 or self.pos.x < self.rect.width / 2:
             self.direction.x *= -1
         if self.pos.y > 600 - self.rect.h / 2 or self.pos.y < self.rect.h / 2:
@@ -315,9 +317,12 @@ class BossMonarch(BossEnemy):
 
     def on_step(self):
         super().on_step()
-        self.pos.x = random.randint(int(self.rect.width / 2), int(1600 - self.rect.width / 2))
-        self.pos.y = random.randint(int(self.rect.h / 2), int(600 - self.rect.h / 2))
-        self.rect.center = (int(self.pos.x), int(self.pos.y))
+        if self.entered:
+            self.pos.x = random.randint(int(self.rect.width / 2), int(1600 - self.rect.width / 2))
+            self.pos.y = random.randint(int(self.rect.h / 2), int(600 - self.rect.h / 2))
+            self.rect.center = (int(self.pos.x), int(self.pos.y))
+        else:
+            self.entered = True
         self.shot_tilt = 0
         if self.boss_step == 0:
             self.move_speed = 3
@@ -372,8 +377,8 @@ class BossMonarch(BossEnemy):
     def create_waves(self):
         waves = []
         if self.boss_step == 4:
-            waves = [Wave(0, 4, waveline5.shift(0, -220)), Wave(4, 4, waveline5.shift(0, -200)),
-                     Wave(2, 4, waveline5.shift(0, -150)), Wave(1, 4, waveline5.shift(0, -100))]
+            waves = [Wave(0, 6, waveline5.shift(0, -220)), Wave(4, 6, waveline5.shift(0, -200)),
+                     Wave(2, 6, waveline5.shift(0, -150)), Wave(1, 6, waveline5.shift(0, -100))]
         if self.boss_step == 5:
-            waves = [Wave(5, 5, waveline6), Wave(5, 5, waveline7)]
+            waves = [Wave(5, 6, waveline6), Wave(5, 6, waveline7)]
         return waves

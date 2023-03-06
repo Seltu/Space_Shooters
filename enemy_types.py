@@ -67,7 +67,7 @@ class Enemy3(EnemyShip):
 class Enemy4(EnemyShip):
     def __init__(self, curve, shoot_delay):
         super().__init__(curve, shoot_delay)
-        self.hp = 10
+        self.hp = 20
         self.shot_speed = 6
         self.shot_time = 8
         self.damage = 1
@@ -105,7 +105,7 @@ class BaronMinion(EnemyShip):
 class Enemy5(EnemyShip):
     def __init__(self, curve, shoot_delay):
         super().__init__(curve, shoot_delay)
-        self.hp = 20
+        self.hp = 50
         self.shot_speed = 5
         self.shot_time = 150
         self.damage = 1

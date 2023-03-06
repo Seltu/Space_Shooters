@@ -24,7 +24,8 @@ class Shot(AnimatedSprite):
         self.pos.x += self.vel.x
         self.pos.y += self.vel.y
         self.rect.center = [int(self.pos.x), int(self.pos.y)]
-        if 0 > self.rect.x > screen_width - self.rect.width and 0 > self.rect.y > screen_height - self.rect.height:
+        if 0 > self.rect.x or self.rect.x > screen_width - self.rect.width or\
+                0 > self.rect.y or self.rect.y > screen_height - self.rect.height:
             self.kill()
 
     def angle_of_velocity(self):
