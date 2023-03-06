@@ -67,7 +67,8 @@ class BossEnemy(Ship):
 class BossBaron(BossEnemy):
     def __init__(self, pos):
         super().__init__(pos)
-        self.hp = 4000
+        self.max_hp = 4000
+        self.hp = self.max_hp
         self.shot_speed = 5
         self.shot_time = 10
         self.boss_timer = 0.9
@@ -136,7 +137,8 @@ class BossBaron(BossEnemy):
 class BossJester(BossEnemy):
     def __init__(self, pos):
         super().__init__(pos)
-        self.hp = 4500
+        self.max_hp = 4500
+        self.hp = self.max_hp
         self.health_stage = 0
         self.speed = 0.05
         self.shot_speed = 5
@@ -275,7 +277,8 @@ class BossJester(BossEnemy):
 class BossMonarch(BossEnemy):
     def __init__(self, pos):
         super().__init__(pos)
-        self.hp = 10000
+        self.max_hp = 10000
+        self.hp = self.max_hp
         self.shot_speed = 5
         self.shot_time = 10
         self.boss_timer = 0.5

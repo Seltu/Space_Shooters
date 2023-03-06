@@ -8,6 +8,7 @@ class Ship(AnimatedSprite):
     def __init__(self):
         super().__init__(0.1, False)
         self.damage = 1
+        self.max_hp = 1
         self.hp = 1
         self.img_ship = []
         self.shot_speed = 4

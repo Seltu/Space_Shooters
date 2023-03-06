@@ -4,6 +4,7 @@ import pygame.math
 
 from level import Levels
 from player import PlayerShip
+from healthbar import HealthBar
 from pickup import *
 from config import *
 from config import screen_height
@@ -28,6 +29,13 @@ class Gameplay(GameState):
         self.temp_pickups = []
         ship = PlayerShip('Sprites/Player', (screen_width / 2 - 100, screen_height - 140))
         ship2 = PlayerShip('Sprites/Player2', (screen_width / 2 + 100, screen_height - 140))
+        self.health_bars = pygame.sprite.Group()
+        health1 = HealthBar(ship, 'player_healthbar', 600, 420)
+        health1.rect.center = (0, -50)
+        health2 = HealthBar(ship2, 'player2_healthbar', 600, 420)
+        health2.rect.center = (0, 100)
+        self.health_bars.add(health1)
+        self.health_bars.add(health2)
         self.players = [ship, ship2]
         self.ships.add(ship)
         self.ships.add(ship2)
@@ -123,6 +131,7 @@ class Gameplay(GameState):
                 self.wave_progress = 99
 
     def update(self, dt):
+        self.health_bars.update()
         self.sprites.update()
         self.scroll_parallax_back += 5
         self.scroll_parallax_middle += 5
@@ -211,6 +220,7 @@ class Gameplay(GameState):
                 del enemy
         self.sprites.draw(screen)
         self.pickups.draw(screen)
+        self.health_bars.draw(screen)
         for ship in self.ships.sprites():
             ship.shot_sprites.draw(screen)
 
