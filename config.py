@@ -14,11 +14,20 @@ menuMusic = pygame.mixer.Sound("Sounds/MenuMusic.wav")
 gameplayMusic = pygame.mixer.Sound("Sounds/gameplayMusic.wav")
 gameplayMusic.set_volume(0.3)
 gameoverMusic = pygame.mixer.Sound("Sounds/gameover.wav")
+gameWinMusic = pygame.mixer.Sound("Sounds/Yippeee.wav")
 
 shotSoundEffect = pygame.mixer.Sound("Sounds/shotBeam.wav")
 shotSoundEffect.set_volume(0.15)
 explosionSoundEffect = pygame.mixer.Sound("Sounds/explosionSoundEffect.wav")
 explosionSoundEffect.set_volume(0.7)
+warningBossSoundEffect = pygame.mixer.Sound("Sounds/bossWarning.wav")
+boomBossSoundEffect = pygame.mixer.Sound("Sounds/bossBoom.wav")
+
+vsBaronMusic = pygame.mixer.Sound("Sounds/vsBaron.wav")
+vsJesterMusic = pygame.mixer.Sound("Sounds/vsJester.wav")
+vsMonarchMusic = pygame.mixer.Sound("Sounds/vsMonarch.wav")
+bossWarningChannel = pygame.mixer.Channel(3)
+bossChannel = pygame.mixer.Channel(2)
 
 waveline1 = BezierCollection()
 waveline1.add(BezierCurve(

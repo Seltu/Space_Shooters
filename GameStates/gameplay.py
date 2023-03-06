@@ -30,7 +30,7 @@ class Gameplay(GameState):
         ship = PlayerShip('Sprites/Player', (screen_width / 2 - 100, screen_height - 140))
         ship2 = PlayerShip('Sprites/Player2', (screen_width / 2 + 100, screen_height - 140))
         self.health_bars = pygame.sprite.Group()
-        health1 = HealthBar(ship, 'player_healthbar', 600, 420)
+        health1 = HealthBar(ship, 'ship_healthbar', 600, 420)
         health1.rect.center = (0, -50)
         health2 = HealthBar(ship2, 'player2_healthbar', 600, 420)
         health2.rect.center = (0, 100)
@@ -137,7 +137,8 @@ class Gameplay(GameState):
         self.scroll_parallax_middle += 5
         self.scroll_parallax_fore += 5
         self.pickups.update()
-        
+
+
         for ship in self.ships.sprites():
             ship.shot_sprites.update()
             for pickup in self.pickups.sprites():
@@ -154,27 +155,41 @@ class Gameplay(GameState):
             closest = self.get_closest_to(enemy, self.ships)
             if closest is not None:
                 enemy.set_target(pygame.math.Vector2(closest.rect.centerx, closest.rect.centery))
-                
+
         self.progress_level()
         if len(self.ships) == 0:
             self.done = True
-            gameplayMusic.fadeout(2000)
+            pygame.mixer.fadeout(1500)
 
     def progress_level(self):
+        global game_level, on_boss
         if self.level_timer > 0:
             self.level_timer -= 1
             return
         if self.boss_fight:
+            if game_level == 0 and not pygame.mixer.Channel(3).get_busy() and not pygame.mixer.Channel(2).get_busy():
+                pygame.mixer.fadeout(1500)
+                bossChannel.play(vsBaronMusic, loops=-1, fade_ms=1500)
+            if game_level == 1 and not pygame.mixer.Channel(3).get_busy() and not pygame.mixer.Channel(2).get_busy():
+                pygame.mixer.fadeout(1500)
+                bossChannel.play(vsJesterMusic, loops=-1, fade_ms=1500)
+            if game_level == 2 and not pygame.mixer.Channel(3).get_busy() and not pygame.mixer.Channel(2).get_busy():
+                pygame.mixer.fadeout(1500)
+                bossChannel.play(vsMonarchMusic, loops=-1, fade_ms=1500)
             if self.level.boss.summon:
                 self.add_waves(self.level.boss.create_waves())
             return
         if game_level > 2:
             self.done = True
             self.next_state = "WIN"
+            game_level = 0
+            on_boss = False
+
         if self.level_progress >= len(self.level.rounds):
-            global on_boss
             on_boss = True
             self.enemies.append(self.level.boss)
+            gameplayMusic.fadeout(1000)
+            bossWarningChannel.play(warningBossSoundEffect)
             self.sprites.add(self.level.boss)
             if self.level.boss.aimed:
                 self.aim_enemies.append(self.level.boss)
@@ -272,6 +287,13 @@ class Gameplay(GameState):
                     self.temp_pickups.clear()
                     self.level.get_level(game_level)
                     self.level_timer = 200
+                    if ship_two.dead:
+                        deathBoss = AnimatedSprite(0.5, True, 'Sprites/BossBoom', 600, 600)
+                        boomBossSoundEffect.play()
+                        self.sprites.add(deathBoss)
+                        deathBoss.rect.center = ship_two.rect.center
+                        pygame.mixer.fadeout(2000)
+                        gameplayMusic.play(-1, 0, 3000)
                 else:
                     if random.randint(0, 100) <= 10:
                         self.random_pickup(ship_two.rect.center)
