@@ -11,8 +11,8 @@ from config import screen_height
 from animation import AnimatedSprite
 from GameStates.game_state import GameState
 
-game_level = 2
-on_boss = True
+game_level = 0
+on_boss = False
 
 
 class Gameplay(GameState):
